@@ -1,0 +1,21 @@
+{
+	"name": "CollegeInsiderExt",
+	"author": "Ken Hilton",
+	"url": "https://github.com/Kenny2github/CollegeInsiderExt",
+	"description": "Extension for College Insider",
+	"AutoloadClasses": {
+		"CollegeInsiderHooks": "CollegeInsiderHooks.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "CollegeInsiderHooks::onParserFirstCallInit"
+	},
+	"MessagesDirs": {
+		"CollegeInsider": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"CollegeInsiderMagic": "CollegeInsider.i18n.php"
+	},
+	"manifest_version": 1
+}
