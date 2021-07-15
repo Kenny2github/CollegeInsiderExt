@@ -18,6 +18,7 @@
 	"collegeinsider-save": "Save",
 	"collegeinsider-move-reason": "Article renamed by [[Special:CollegeInsider]]",
 	"collegeinsider-edit-reason": "Article edited by [[Special:CollegeInsider]]",
+	"collegeinsider-invalid-article": "<span class=\"error\">Error: There is no $2-type article $1.</span>",
 	"collegeinsider-no-such-file": "<div class=\"error\">Error: \"$1\" is not an existing file. Make sure to upload all requisite files ''before'' uploading the article.</div>",
 	"collegeinsider-moved": "The article \"$1\" has been retitled to [[$2]].",
 	"collegeinsider-saved": "The article [[$1]] has been saved."
