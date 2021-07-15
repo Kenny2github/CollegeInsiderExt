@@ -1,16 +1,5 @@
 <?php
-define( 'COLLEGEINSIDER_CATEGORIES', [
-	'Positive Purpose' => 'purpose',
-	'Positive Relationships' => 'relationships',
-	'Positive Engagement' => 'engagement',
-	'Positive Emotion' => 'emotion',
-	'Positive Achievement' => 'achievement',
-	'Positive Health' => 'health'
-] );
-
-define( 'COLLEGEINSIDER_TYPES', [
-	'article', 'event', 'interview'
-] );
+require_once __DIR__ . '/defines.php';
 
 class SpecialCollegeInsider extends SpecialPage {
 	function __construct() {
@@ -30,7 +19,9 @@ class SpecialCollegeInsider extends SpecialPage {
 
 		$pageid = intval( $par );
 		$page = $pageid ? WikiPage::newFromID( $pageid ) : false;
-		$metaRow = false; // TODO when DB exists
+		$metaRow = $page ? wfGetDB( DB_REPLICA )->selectRow(
+			'collegeinsider', '*', [ 'page_id' => $page->getID() ]
+		) : false;
 
 		$out->addHTML( Html::openElement( 'form', [
 			'id' => 'editform',
@@ -58,8 +49,12 @@ class SpecialCollegeInsider extends SpecialPage {
 			wfMessage( 'collegeinsider-date-label' )->text(),
 			'collegeinsider-date-input'
 		) . ' ' . Html::input(
-			'date', date( 'Y-m-d', $metaRow ? strtotime( $metaRow->date ) : time() ),
-			'date', [ 'id' => 'collegeinsider-date-input', 'required' => '' ]
+			'date', date(
+				'Y-m-d',
+				$metaRow
+				? wfTimestamp( TS_UNIX, $metaRow->datestamp . '000000' )
+				: time()
+			), 'date', [ 'id' => 'collegeinsider-date-input', 'required' => '' ]
 		) ) );
 
 		// Article title
@@ -102,7 +97,7 @@ class SpecialCollegeInsider extends SpecialPage {
 		$out->addHTML( Html::element( 'div', [
 			'id' => 'description',
 			'contenteditable' => 'true'
-		], $metaRow ? $metaRow->description : '' ) );
+		], $metaRow ? $metaRow->blurb : '' ) );
 
 		// Content
 		$this->addLabelHeader( $out, 'content' );
@@ -296,7 +291,7 @@ EOS
 			}
 		}
 
-		$date = str_replace( '-', '', $request->getVal( 'date' ) );
+		$date = intval( str_replace( '-', '', $request->getVal( 'date' ) ) );
 		$categories = [];
 		foreach ( $request->getArray( 'tags' ) as $tag) {
 			$cat = array_flip( COLLEGEINSIDER_CATEGORIES )[$tag];
@@ -318,7 +313,19 @@ EOS
 			wfMessage( 'collegeinsider-edit-reason' )->text(),
 			EDIT_INTERNAL, false, $user
 		);
-		// TODO when DB exists: save metadata
+
+		wfGetDB( DB_MASTER )->replace(
+			'collegeinsider',
+			'page_id',
+			[
+				'page_id' => $page->getID(),
+				'thumbnail' => $thumbnail,
+				'datestamp' => $date,
+				'byline' => $byline,
+				'blurb' => $description,
+				'lang' => $language
+			]
+		);
 
 		$out->addWikiMsg( 'collegeinsider-saved', $userTitle->getPrefixedText() );
 		$out->addReturnTo(

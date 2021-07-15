@@ -10,4 +10,12 @@ class CollegeInsiderHooks {
 		$index = intval($frame->expand($args[1]));
 		return "(Would get the $index-th $type here)"; // TODO
 	}
+
+	public static function onLoadExtensionSchemaUpdates( $updater ) {
+		$updater->addExtensionTable(
+			'collegeinsider',
+			__DIR__ . '/sql/table.sql'
+		);
+		return true;
+	}
 }

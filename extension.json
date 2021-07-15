@@ -9,7 +9,8 @@
 		"SpecialCollegeInsider": "SpecialCollegeInsider.php"
 	},
 	"Hooks": {
-		"ParserFirstCallInit": "CollegeInsiderHooks::onParserFirstCallInit"
+		"ParserFirstCallInit": "CollegeInsiderHooks::onParserFirstCallInit",
+		"LoadExtensionSchemaUpdates": "CollegeInsiderHooks::onLoadExtensionSchemaUpdates"
 	},
 	"MessagesDirs": {
 		"CollegeInsiderExt": [
