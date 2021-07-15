@@ -53,7 +53,8 @@ class CollegeInsiderHooks {
 		<p class="long-description">$description</p>
 	</div></a>
 </div>
-EOS, 'noparse' => true, 'isHTML' => true ];
+EOS
+		, 'noparse' => true, 'isHTML' => true ];
 	}
 
 	public static function onLoadExtensionSchemaUpdates( $updater ) {
