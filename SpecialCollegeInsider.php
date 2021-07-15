@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/defines.php';
 
 class SpecialCollegeInsider extends SpecialPage {
 	function __construct() {
@@ -7,6 +6,7 @@ class SpecialCollegeInsider extends SpecialPage {
 	}
 
 	function execute( $par ) {
+		global $wgCollegeInsiderCategories, $wgCollegeInsiderTypes;
 		$request = $this->getRequest();
 		$out = $this->getOutput();
 		$this->setHeaders();
@@ -30,7 +30,7 @@ class SpecialCollegeInsider extends SpecialPage {
 
 		// Type of article
 		$typeOpts = [];
-		foreach ( COLLEGEINSIDER_TYPES as $type ) {
+		foreach ( $wgCollegeInsiderTypes as $type ) {
 			$typeOpts[] = Html::element(
 				'option', [ 'value' => $type ],
 				wfMessage( "collegeinsider-type-$type" )->text()
@@ -68,11 +68,11 @@ class SpecialCollegeInsider extends SpecialPage {
 		$pageCats = [];
 		if ( $page ) {
 			foreach ( $page->getCategories() as $cat ) {
-				$pageCats[] = COLLEGEINSIDER_CATEGORIES[$cat->getText()];
+				$pageCats[] = $wgCollegeInsiderCategories[$cat->getText()];
 			}
 		}
 		$labels = [];
-		foreach ( COLLEGEINSIDER_CATEGORIES as $cat => $tag ) {
+		foreach ( $wgCollegeInsiderCategories as $cat => $tag ) {
 			$labels[] = Html::rawElement( 'label', [], Html::input(
 				'tags[]', $tag, 'checkbox',
 				in_array( $tag, $pageCats ) ? [ 'checked' => '' ] : []
@@ -244,10 +244,7 @@ EOS
 	}
 
 	public function doPost( $par, WebRequest $request, OutputPage $out ) {
-		/*$out->addHTML( Html::element(
-			'pre', [], var_export( $request->getValues(), true )
-		) );
-		return;*/
+		global $wgCollegeInsiderCategories;
 		$user = $this->getUser();
 
 		$thumbnail = Title::newFromText( 'File:' . $request->getText( 'thumbnail' ) );
@@ -294,7 +291,7 @@ EOS
 		$date = intval( str_replace( '-', '', $request->getVal( 'date' ) ) );
 		$categories = [];
 		foreach ( $request->getArray( 'tags' ) as $tag) {
-			$cat = array_flip( COLLEGEINSIDER_CATEGORIES )[$tag];
+			$cat = array_flip( $wgCollegeInsiderCategories )[$tag];
 			$categories[] = "[[Category:$cat]]";
 		}
 		$articleType = $request->getText( 'type' );

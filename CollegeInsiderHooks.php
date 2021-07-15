@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/defines.php';
 
 class CollegeInsiderHooks {
 	public static function onParserFirstCallInit( Parser $parser ) {
@@ -7,6 +6,7 @@ class CollegeInsiderHooks {
 	}
 
 	public static function renderArticle( Parser $parser, PPFrame $frame, $args ) {
+		global $wgCollegeInsiderCategories;
 		$dbr = wfGetDB( DB_REPLICA );
 		$index = intval( $frame->expand( $args[0] ) );
 		$type = isset( $args[1] ) ? $frame->expand( $args[1] ) : '*';
@@ -39,7 +39,7 @@ class CollegeInsiderHooks {
 		$link = $pageTitle->getLocalURL();
 		$hashtags = [];
 		foreach ( $page->getCategories() as $title ) {
-			$key = COLLEGEINSIDER_CATEGORIES[$title->getText()];
+			$key = $wgCollegeInsiderCategories[$title->getText()];
 			if ( !$key ) continue;
 			$url = $title->getLocalURL();
 			$hashtags[] = "<a href=\"$url\">#positive$key</a>";

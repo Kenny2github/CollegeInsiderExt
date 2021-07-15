@@ -23,5 +23,16 @@
 	"SpecialPages": {
 		"CollegeInsider": "SpecialCollegeInsider"
 	},
+	"config": {
+		"CollegeInsiderCategories": {
+			"Positive Purpose": "purpose",
+			"Positive Relationships": "relationships",
+			"Positive Engagement": "engagement",
+			"Positive Emotion": "emotion",
+			"Positive Achievement": "achievement",
+			"Positive Health": "health"
+		},
+		"CollegeInsiderTypes": ["article", "event", "interview"]
+	},
 	"manifest_version": 1
 }
