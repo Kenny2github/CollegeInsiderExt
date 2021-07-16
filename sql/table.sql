@@ -17,4 +17,6 @@ CREATE TABLE IF NOT EXISTS /*_*/collegeinsider (
 	FOREIGN KEY(page_id) REFERENCES /*_*/page(page_id)
 );
 
+CREATE INDEX IF NOT EXISTS /*i*/ci_bydate ON /*_*/collegeinsider(datestamp);
+
 COMMIT;
