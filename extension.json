@@ -6,6 +6,7 @@
 	"type": "other",
 	"AutoloadClasses": {
 		"CollegeInsiderHooks": "CollegeInsiderHooks.php",
+		"CollegeInsiderPager": "CollegeInsiderPager.php",
 		"SpecialCollegeInsider": "SpecialCollegeInsider.php"
 	},
 	"Hooks": {

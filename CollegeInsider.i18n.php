@@ -9,5 +9,6 @@ $magicWords = [];
  * @author Ken Hilton
  */
 $magicWords['en'] = [
-	'article' => [ 0, 'article' ]
+	'article' => [ 0, 'article' ],
+	'articles' => [ 0, 'articles' ]
 ];

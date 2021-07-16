@@ -3,10 +3,10 @@
 class CollegeInsiderHooks {
 	public static function onParserFirstCallInit( Parser $parser ) {
 		$parser->setFunctionHook( 'article', [ self::class, 'renderArticle' ], SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'articles', [ self::class, 'renderArticles' ], SFH_OBJECT_ARGS );
 	}
 
 	public static function renderArticle( Parser $parser, PPFrame $frame, $args ) {
-		global $wgCollegeInsiderCategories;
 		$dbr = wfGetDB( DB_REPLICA );
 		$index = intval( $frame->expand( $args[0] ) );
 		$type = isset( $args[1] ) ? $frame->expand( $args[1] ) : '*';
@@ -15,7 +15,7 @@ class CollegeInsiderHooks {
 			$conds = [];
 		} else {
 			$conds = [ 'cl_to' => str_replace( ' ', '_', wfMessage(
-				"collegeinsider-type-$type"
+				'collegeinsider-type-' . $type
 			)->text() ) . 's' ];
 		}
 		$row = $dbr->selectRow(
@@ -29,6 +29,28 @@ class CollegeInsiderHooks {
 			'collegeinsider-invalid-article',
 			$index, $type
 		)->text();
+		return [ self::renderRow( $row, $cls ), 'noparse' => true, 'isHTML' => true ];
+	}
+
+	public static function renderArticles( Parser $parser, PPFrame $frame, $args ) {
+		// disable caching so that paging works properly
+		global $wgOut;
+		$parser->getOutput()->updateCacheExpiry( 0 );
+		$wgOut->enableClientCache( false );
+
+		$dbr = wfGetDB( DB_REPLICA );
+		$type = $frame->expand( $args[0] );
+		$lang = isset( $args[1] ) ? $frame->expand( $args[1] ) : 'en';
+
+		$pager = new CollegeInsiderPager( $type, $lang );
+		$out = Html::rawElement( 'div', [], $pager->getNavigationBar() );
+		$out .= $pager->getBody() . $out;
+
+		return [ $out, 'noparse' => true, 'isHTML' => true ];
+	}
+
+	public static function renderRow( $row, $cls = 'news' ) {
+		global $wgCollegeInsiderCategories;
 		$file = wfFindFile( $row->thumbnail );
 		if ( !$file ) return $row->thumbnail;
 		$file = $file->getUrl();
@@ -45,7 +67,7 @@ class CollegeInsiderHooks {
 			$hashtags[] = "<a href=\"$url\">#positive$key</a>";
 		}
 		$hashtags = implode( '', $hashtags ) ?: '<a>#positiveeducation</a>';
-		return [ <<<EOS
+		return <<<EOS
 <div class="$cls" style="background-image: url('$file');">
 	<div class="hashtags">&nbsp;$hashtags</div>
 	<a href="$link"><div class="description">
@@ -54,7 +76,7 @@ class CollegeInsiderHooks {
 	</div></a>
 </div>
 EOS
-		, 'noparse' => true, 'isHTML' => true ];
+		;
 	}
 
 	public static function onLoadExtensionSchemaUpdates( $updater ) {
