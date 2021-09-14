@@ -12,7 +12,7 @@ class SpecialCollegeInsider extends SpecialPage {
 		$this->setHeaders();
 		$out->setPageTitle( wfMessage( 'collegeinsider-edit-title' )->escaped() );
 
-		if ( !$this->getUser()->isAllowed( 'report' ) ) {
+		if ( !$this->getUser()->isAllowed( 'edit' ) ) {
 			$this->displayRestrictionError();
 			return;
 		}
