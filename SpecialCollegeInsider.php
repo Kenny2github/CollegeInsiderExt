@@ -73,7 +73,9 @@ class SpecialCollegeInsider extends SpecialPage {
 		$pageCats = [];
 		if ( $page ) {
 			foreach ( $page->getCategories() as $cat ) {
-				$pageCats[] = $wgCollegeInsiderCategories[$cat->getText()];
+				$cat = $cat->getText();
+				if ( !isset( $wgCollegeInsiderCategories[$cat] )) continue;
+				$pageCats[] = $wgCollegeInsiderCategories[$cat];
 			}
 		}
 		$labels = [];
