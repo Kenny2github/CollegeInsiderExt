@@ -251,6 +251,7 @@ EOS
 		$text = preg_replace( $re1, '', $text );
 		$text = preg_replace_callback( $re2, function ($matches) {
 			$url = $matches[1];
+			if ( substr( $url, 0, 5) == 'data:' ) return 'src="' . $url . '"';
 			$split = explode( '/', $url );
 			$split = end( $split );
 			$split = explode( '.', $split );
@@ -347,10 +348,6 @@ EOS
 		);
 
 		$out->addWikiMsg( 'collegeinsider-saved', $userTitle->getPrefixedText() );
-		$out->addReturnTo(
-			$this->getPageTitle( $par ?: $page->getID() ),
-			$request->getQueryValues(),
-			$this->getPageTitle()->getPrefixedText()
-		);
+		$out->addReturnTo( $this->getPageTitle( $par ?: $page->getID() ) );
 	}
 }
