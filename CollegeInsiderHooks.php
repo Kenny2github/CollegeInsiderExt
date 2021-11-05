@@ -2,8 +2,19 @@
 
 class CollegeInsiderHooks {
 	public static function onParserFirstCallInit( Parser $parser ) {
+		$parser->setHook( 'img', [ self::class, 'renderImg' ] );
 		$parser->setFunctionHook( 'article', [ self::class, 'renderArticle' ], SFH_OBJECT_ARGS );
 		$parser->setFunctionHook( 'articles', [ self::class, 'renderArticles' ], SFH_OBJECT_ARGS );
+	}
+
+	public static function renderImg( $input, $args, Parser $parser, PPFrame $frame ) {
+		$attrs = '';
+		foreach ( $args as $name => $value ) {
+			if ( in_array( $name, [ 'src', 'width', 'height', 'style', 'alt' ] ) ) {
+				$attrs .= ' ' . htmlspecialchars($name) . '="' . htmlspecialchars( $value ) . '"';
+			}
+		}
+		return "<img$attrs/>";
 	}
 
 	public static function renderArticle( Parser $parser, PPFrame $frame, $args ) {

@@ -246,7 +246,22 @@ EOS
 
 	public static function fulltextToWikitext( $text ) {
 		$re1 = '%</?tbody>%';
+		$re2 = '%src="([^"]+)"%';
+		$re3 = '%<img([^>]+[^/>])>%';
 		$text = preg_replace( $re1, '', $text );
+		$text = preg_replace_callback( $re2, function ($matches) {
+			$url = $matches[1];
+			$split = explode( '/', $url );
+			$split = end( $split );
+			$split = explode( '.', $split );
+			$imgtype = end( $split );
+			if ( $imgtype == 'jpg' ) $imgtype = 'jpeg';
+			if ( $imgtype == 'svg' ) $imgtype = 'svg+xml';
+			if ( !in_array( $imgtype, [ 'png', 'jpeg', 'bmp', 'gif', 'svg+xml'] ) ) $imgtype = 'png';
+			$blob = base64_encode( file_get_contents( $url ) );
+			return 'src="' . "data:image/$imgtype;base64,$blob" . '"';
+		}, $text );
+		$text = preg_replace( $re3, '<img$1/>', $text );
 		return $text;
 	}
 
